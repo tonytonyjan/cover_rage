@@ -1,0 +1,28 @@
+<table>
+  <thead>
+    <tr>
+      <th>path</th>
+      <th>lines</th>
+      <th>relevancy</th>
+      <th>hit</th>
+      <th>miss</th>
+      <th>coverage (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% items.each do |item| %>
+    <tr>
+      <td>
+        <a href="/file?path=<%= URI.encode_uri_component(item.path) %>"
+          ><%= item.path %></a
+        >
+      </td>
+      <td style="text-align: right"><%= item.number_of_lines %></td>
+      <td style="text-align: right"><%= item.number_of_relevancies %></td>
+      <td style="text-align: right"><%= item.number_of_hits %></td>
+      <td style="text-align: right"><%= item.number_of_misses %></td>
+      <td style="text-align: right"><%= '%.2f' % (item.coverage * 100) %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

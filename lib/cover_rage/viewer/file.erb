@@ -1,0 +1,51 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+/>
+<style>
+  .line {
+    width: 100%;
+    display: inline-block;
+    counter-increment: line_number;
+  }
+
+  .green {
+    background-color: rgb(221, 255, 221);
+  }
+
+  .red {
+    background-color: rgb(255, 212, 212);
+  }
+
+  .number {
+    display: inline-block;
+    text-align: right;
+    margin-right: 0.5em;
+    background-color: lightgray;
+    padding: 0 0.5em 0 1.5em;
+  }
+</style>
+<h1><%= path %></h1>
+<pre><code id="code"><%= source_code.encode(xml: :text) %></code></pre>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script id="execution_count" type="application/json"><%= execution_count.encode(xml: :text) %></script>
+<script>
+  const execution_count = JSON.parse(
+    document.querySelector("#execution_count").childNodes[0].nodeValue
+  );
+  const digit_width = Math.floor(Math.log10(Math.max(...execution_count))) + 1;
+  const $code = document.querySelector("#code");
+  $code.innerHTML = hljs
+    .highlight($code.textContent, {
+      language: "ruby",
+    })
+    .value.split("\n")
+    .map((line, index) => {
+      const value = execution_count[index];
+      let color = "";
+      if (typeof value === "number") color = value > 0 ? "green" : "red";
+      const number = typeof value === "number" ? value : "-";
+      return `<span class="line ${color}"><span class="number">${number.toString().padStart(digit_width, ' ')}</span>${line}</span>`;
+    })
+    .join("\n");
+</script>
