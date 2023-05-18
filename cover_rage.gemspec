@@ -13,4 +13,5 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.{rb,erb}', 'bin/config.ru']
   spec.executables = ['cover_rage']
   spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'minitest', '~> 5.18'
 end

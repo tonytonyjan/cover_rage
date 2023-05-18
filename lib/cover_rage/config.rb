@@ -29,5 +29,9 @@ module CoverRage
         Range.new(*args, true)
       end
     end
+
+    def self.disable?
+      @disable ||= ENV.key?('COVER_RAGE_DISABLE')
+    end
   end
 end
