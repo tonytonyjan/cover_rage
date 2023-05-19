@@ -1,5 +1,37 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'rackup'
-Dir.chdir(__dir__) { Rackup::Server.start }
+if ARGV.first == 'clear'
+  require 'cover_rage/config'
+  CoverRage::Config.store.clear
+  exit
+end
+
+require 'optparse'
+options = { format: 'html' }
+OptionParser.new do |parser|
+  parser.banner = <<~USAGE
+    Clear store:
+      #{$PROGRAM_NAME} clear
+
+    Export report:
+      #{$PROGRAM_NAME} [options]
+  USAGE
+  parser.on('-fFORMAT', '--format=FORMAT', 'output format (json|html)') { options[:format] = _1 }
+end.parse!
+
+reporter =
+  case options[:format]
+  when 'json'
+    require 'cover_rage/reporters/json_reporter'
+    CoverRage::Reporters::JsonReporter.new
+  when 'html'
+    require 'cover_rage/reporters/html_reporter'
+    CoverRage::Reporters::HtmlReporter.new
+  else
+    warn "Unknown format: #{options[:format]}"
+    exit 1
+  end
+
+require 'cover_rage/config'
+puts reporter.report(CoverRage::Config.store.list)

@@ -4,7 +4,6 @@
 
 - `sqlite3`
 - `redis`
-- `rackup`
 
 ## Installation
 
@@ -38,11 +37,11 @@ else
   p :ng
 end
 RUBY
-gem install cover_rage sqlite3 rackup
+gem install cover_rage sqlite3
 export COVER_RAGE_STORE_URL=sqlite://$(pwd)/mydb
 ruby -r cover_rage foo.rb
-cover_rage -p 8080
-# open http://localhost:8080
+cover_rage > report.html
+open report.html
 ```
 
 ### Quick Example for Ruby on Rails
@@ -55,9 +54,9 @@ Rails requires Ruby gems automatically by deafult so we don't need to manually a
 
 To manually start cover_rage, Add `gem 'cover_rage', require: false` to Gemfile and require `cover_rage` explicitly in the code base.
 
-## Viewer Server
+## Export Report
 
-Use the command `cover_rage` to start a viewer server.
+`COVER_RAGE_STORE_URL=sqlite://$(pwd)/cover_rage.db cover_rage --format html`
 
 Run `cover_rage -h` for more information.
 
