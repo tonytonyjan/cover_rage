@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoverRage</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+    />
+    <style>
+      .line {
+        width: 100%;
+        display: inline-block;
+        counter-increment: line_number;
+      }
+
+      .green {
+        background-color: rgb(221, 255, 221);
+      }
+
+      .red {
+        background-color: rgb(255, 212, 212);
+      }
+
+      .number {
+        display: inline-block;
+        text-align: right;
+        margin-right: 0.5em;
+        background-color: lightgray;
+        padding: 0 0.5em 0 1.5em;
+      }
+
+      .nav {
+        display: flex;
+        list-style: none;
+        padding-left: 0;
+      }
+      .nav > * {
+        margin-left: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="main"></main>
+
+    <div style="display: none">
+      <div id="page-index">
+        <nav>
+          <ul class="nav">
+            <li><a href="#/">Index</a></li>
+          </ul>
+        </nav>
+        <table>
+          <thead>
+            <tr>
+              <th>path</th>
+              <th>lines</th>
+              <th>relevancy</th>
+              <th>hit</th>
+              <th>miss</th>
+              <th>coverage (%)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="page-file">
+        <nav>
+          <ul class="nav">
+            <li><a href="#/">Index</a></li>
+            <li>></li>
+            <li id="title"></li>
+          </ul>
+        </nav>
+        <pre><code id="code"></code></pre>
+      </div>
+    </div>
+
+    <script id="records" type="application/json"><%= records %></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+      const main = document.getElementById("main");
+      const page_index = document.getElementById("page-index");
+      const title = document.createTextNode("");
+      document.getElementById("title").appendChild(title);
+      const code = document.getElementById("code");
+      const page_file = document.getElementById("page-file");
+      const records = JSON.parse(
+        document.getElementById("records").childNodes[0].nodeValue
+      );
+
+      const route = (path) => {
+        if (path.startsWith("/file/")) {
+          const filepath = path.slice(6);
+          if (records.find((record) => record.path === filepath))
+            return { page: "file", path: filepath };
+        }
+
+        return { page: "index" };
+      };
+
+      const render = (routing) => {
+        let page;
+        if (routing.page === "file") {
+          const record = records.find(({ path }) => path === routing.path);
+          page = page_file;
+          title.nodeValue = routing.path;
+          const digit_width =
+            Math.floor(Math.log10(Math.max(...record.execution_count))) + 1;
+          code.innerHTML = hljs
+            .highlight(
+              records.find(({ path }) => path === routing.path).source,
+              {
+                language: "ruby",
+              }
+            )
+            .value.split("\n")
+            .map((line, index) => {
+              const value = record.execution_count[index];
+              let color = "";
+              if (typeof value === "number")
+                color = value > 0 ? "green" : "red";
+              const number = typeof value === "number" ? value : "-";
+              return `<span class="line ${color}"><span class="number">${number
+                .toString()
+                .padStart(digit_width, " ")}</span>${line}</span>`;
+            })
+            .join("\n");
+        }
+        if (routing.page === "index") {
+          page = page_index;
+        }
+        if (main.childNodes.length === 0) main.appendChild(page);
+        else main.replaceChild(page, main.childNodes[0]);
+      };
+      const createTdTextNode = (text) => {
+        const td = document.createElement("td");
+        td.appendChild(document.createTextNode(text));
+        return td;
+      };
+
+      page_index.querySelector("tbody").appendChild(
+        records
+          .map(({ path, revision, source, execution_count }) => {
+            const hit = execution_count.reduce(
+              (accumulator, current) =>
+                current > 0 ? accumulator + 1 : accumulator,
+              0
+            );
+            const miss = execution_count.reduce(
+              (accumulator, current) =>
+                current === 0 ? accumulator + 1 : accumulator,
+              0
+            );
+            const relevancy = execution_count.reduce(
+              (accumulator, current) =>
+                current !== null ? accumulator + 1 : accumulator,
+              0
+            );
+            const coverage = hit / relevancy;
+            return {
+              path,
+              lines: execution_count.length,
+              hit,
+              miss,
+              relevancy,
+              coverage,
+            };
+          })
+          .sort(({ coverage: a }, { coverage: b }) => {
+            if (isNaN(b)) return -1;
+            if (isNaN(a)) return 1;
+            return a - b;
+          })
+          .reduce(
+            (fragment, { path, lines, hit, miss, relevancy, coverage }) => {
+              const tr = document.createElement("tr");
+              tr.appendChild(
+                (() => {
+                  const anchor = document.createElement("a");
+                  anchor.href = `#/file/${path}`;
+                  anchor.appendChild(document.createTextNode(path));
+                  const td = document.createElement("td");
+                  td.appendChild(anchor);
+                  return td;
+                })()
+              );
+              tr.appendChild(createTdTextNode(lines));
+              tr.appendChild(createTdTextNode(relevancy));
+              tr.appendChild(createTdTextNode(hit));
+              tr.appendChild(createTdTextNode(miss));
+              tr.appendChild(
+                createTdTextNode(Math.round(coverage * 10000) / 100)
+              );
+              fragment.appendChild(tr);
+              return fragment;
+            },
+            document.createDocumentFragment()
+          )
+      );
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const routing = route(window.location.hash.slice(1));
+        render(routing);
+      });
+
+      window.addEventListener("popstate", (event) => {
+        const routing = route(window.location.hash.slice(1));
+        render(routing);
+      });
+    </script>
+  </body>
+</html>
