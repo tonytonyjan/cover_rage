@@ -1,3 +1,5 @@
+![test](https://github.com/tonytonyjan/cover_rage/actions/workflows/test.yml/badge.svg)
+
 # CoverRage
 
 ## Prerequisite Ruby Gems
