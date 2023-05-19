@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'cover_rage/record'
 require 'redis'
 require 'json'
 
