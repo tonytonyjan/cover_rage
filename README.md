@@ -2,7 +2,17 @@
 
 # CoverRage
 
+A Ruby production code coverage tool designed to assist you in identifying unused code, offering the following features:
+
+1. easy setup
+2. minimal performance overhead
+3. minimal external dependencies
+
+![demo](images/demo.png)
+
 ## Prerequisite Ruby Gems
+
+One of:
 
 - `sqlite3`
 - `redis`
@@ -24,7 +34,7 @@ bundle add cover_rage
 1. Set `COVER_RAGE_STORE_URL` environment variable.
 2. Put `require 'cover_rage'` wherever you want to start to record.
 
-### Quick Example
+### Quick Start
 
 ```shell
 cat >foo.rb <<RUBY
@@ -40,10 +50,10 @@ else
 end
 RUBY
 gem install cover_rage sqlite3
-export COVER_RAGE_STORE_URL=sqlite://$(pwd)/mydb
+export COVER_RAGE_STORE_URL=sqlite://$(pwd)/cover_rage.db
 ruby -r cover_rage foo.rb
 cover_rage > report.html
-open report.html
+# open report.html
 ```
 
 ### Quick Example for Ruby on Rails
