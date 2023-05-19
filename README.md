@@ -81,18 +81,18 @@ Run `cover_rage -h` for more information.
    1. `redis://REDIS_HOST`
    2. `sqlite://ABSOLUTE_PATH_TO_SQLITE_DB_FILE`
 
-2. `COVE_RAGER_SLEEP_DURATION`
+2. `COVE_RAGE_SLEEP_DURATION`
 
    Defaults to `60:90`.
 
-   `COVE_RAGER_SLEEP_DURATION` sets the seconds between each write to the store.
+   `COVE_RAGE_SLEEP_DURATION` sets the seconds between each write to the store.
 
    The value should be either an integer or a range in the format `n:m`.
 
    By default `cover_rage` randomly sleeps from 60 to 90 seconds before each write to the store in order to solve the issue like [cache stampede](https://en.wikipedia.org/wiki/Cache_stampede). This approaches is called probabilistic early expiration.
 
-3. `COVE_RAGER_ROOT_PATH`
+3. `COVE_RAGE_ROOT_PATH`
 
    Defaults to `Rails.root` if `Rails` is defined, otherwise, defaults to `Dir.pwd`.
 
-   `COVE_RAGER_ROOT_PATH` sets project root path. `cover_rage` only records files in the root path.
+   `COVE_RAGE_ROOT_PATH` sets project root path. `cover_rage` only records files in the root path.
