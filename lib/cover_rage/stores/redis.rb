@@ -3,13 +3,19 @@
 require 'cover_rage/record'
 require 'redis'
 require 'json'
+require 'openssl'
 
 module CoverRage
   module Stores
     class Redis
       KEY = 'cover_rage_records'
       def initialize(url)
-        @redis = ::Redis.new(url: url)
+        @redis =
+          if url.start_with?('rediss')
+            ::Redis.new(url: url, ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE })
+          else
+            ::Redis.new(url: url)
+          end
       end
 
       def import(records)
