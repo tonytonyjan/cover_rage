@@ -11,7 +11,7 @@ module CoverRage
       @store ||= begin
         uri = URI.parse(ENV.fetch('COVER_RAGE_STORE_URL'))
         case uri.scheme
-        when 'redis'
+        when 'redis', 'rediss'
           require 'cover_rage/stores/redis'
           CoverRage::Stores::Redis.new(uri.to_s)
         when 'sqlite'
