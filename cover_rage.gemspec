@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'cover_rage'
-  spec.version = '0.0.5'
+  spec.version = '0.0.6'
   spec.authors = 'Weihang Jian'
   spec.email = 'tonytonyjan@gmail.com'
   spec.summary = 'A Ruby production code coverage tool'
