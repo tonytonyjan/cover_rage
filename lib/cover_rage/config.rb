@@ -20,6 +20,8 @@ module CoverRage
         when 'pstore'
           require 'cover_rage/stores/pstore'
           CoverRage::Stores::Pstore.new(uri.path)
+        else
+          raise "Unsupported store: #{uri.scheme}"
         end
       end
     end
