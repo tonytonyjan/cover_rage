@@ -49,8 +49,8 @@ else
   p :ng
 end
 RUBY
-gem install cover_rage sqlite3
-export COVER_RAGE_STORE_URL=sqlite://$(pwd)/cover_rage.db
+gem install cover_rage
+export COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db
 ruby -r cover_rage foo.rb
 cover_rage > report.html
 # open report.html
@@ -59,7 +59,7 @@ cover_rage > report.html
 ### Quick Example for Ruby on Rails
 
 ```sh
-COVER_RAGE_STORE_URL=sqlite://$(pwd)/cover_rage.db rails s
+COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db rails s
 ```
 
 Rails requires Ruby gems automatically by deafult so we don't need to manually add `require 'cover_rage'`.
@@ -68,7 +68,7 @@ To manually start cover_rage, Add `gem 'cover_rage', require: false` to Gemfile 
 
 ## Export Report
 
-`COVER_RAGE_STORE_URL=sqlite://$(pwd)/cover_rage.db cover_rage --format html`
+`COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db cover_rage --format html`
 
 Run `cover_rage -h` for more information.
 
@@ -78,8 +78,9 @@ Run `cover_rage -h` for more information.
 
    Available URL schemes:
 
-   1. `redis://REDIS_HOST`
-   2. `sqlite://ABSOLUTE_PATH_TO_SQLITE_DB_FILE`
+   1. `pstore://ABSOLUTE_PATH_TO_PSTORE_FILE`
+   2. `redis://REDIS_HOST`
+   3. `sqlite://ABSOLUTE_PATH_TO_SQLITE_DB_FILE`
 
 2. `COVE_RAGE_SLEEP_DURATION`
 
