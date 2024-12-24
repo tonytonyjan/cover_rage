@@ -17,6 +17,9 @@ module CoverRage
         when 'sqlite'
           require 'cover_rage/stores/sqlite'
           CoverRage::Stores::Sqlite.new(uri.path)
+        when 'pstore'
+          require 'cover_rage/stores/pstore'
+          CoverRage::Stores::Pstore.new(uri.path)
         end
       end
     end
