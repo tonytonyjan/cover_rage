@@ -20,14 +20,15 @@ module CoverRage
     def start
       return if @thread&.alive?
 
-      Coverage.start if COVERAGE_STOP_STATES.include?(Coverage.state)
+      if COVERAGE_STOP_STATES.include?(Coverage.state)
+        Coverage.start
+        at_exit { save(Coverage.result) }
+      end
       @thread = Thread.new do
         loop do
           sleep(rand(SLEEP_DURATION))
           save(Coverage.result(stop: false, clear: true))
         end
-      ensure
-        save(Coverage.result)
       end
     end
 
