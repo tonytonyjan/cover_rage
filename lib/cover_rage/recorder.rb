@@ -7,7 +7,6 @@ require 'digest'
 module CoverRage
   class Recorder
     SLEEP_DURATION = Config.sleep_duration
-    COVERAGE_STOP_STATES = %i[idle suspended].freeze
     attr_reader :store
 
     def initialize(root_path:, store:)
@@ -20,7 +19,7 @@ module CoverRage
     def start
       return if @thread&.alive?
 
-      if COVERAGE_STOP_STATES.include?(Coverage.state)
+      unless Coverage.running?
         Coverage.start
         at_exit { save(Coverage.result) }
       end
