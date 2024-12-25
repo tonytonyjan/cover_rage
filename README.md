@@ -10,13 +10,6 @@ A Ruby production code coverage tool designed to assist you in identifying unuse
 
 ![demo](images/demo.png)
 
-## Prerequisite Ruby Gems
-
-One of:
-
-- `sqlite3`
-- `redis`
-
 ## Installation
 
 ```shell
