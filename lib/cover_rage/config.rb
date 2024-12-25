@@ -9,7 +9,7 @@ module CoverRage
 
     def self.store
       @store ||= begin
-        uri = URI.parse(ENV.fetch('COVER_RAGE_STORE_URL'))
+        uri = URI.parse(ENV.fetch('COVER_RAGE_STORE_URL', "pstore:#{File.join(Dir.pwd, 'cover_rage.pstore')}"))
         case uri.scheme
         when 'redis', 'rediss'
           require 'cover_rage/stores/redis'
