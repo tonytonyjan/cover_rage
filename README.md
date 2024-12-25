@@ -30,7 +30,7 @@ bundle add cover_rage
 ### Quick Start
 
 ```shell
-cat >foo.rb <<RUBY
+cat >main.rb <<RUBY
 s = 0
 10.times do |x|
   s += x
@@ -44,15 +44,15 @@ end
 RUBY
 gem install cover_rage
 export COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db
-ruby -r cover_rage foo.rb
+ruby -r cover_rage main.rb
 cover_rage > report.html
-# open report.html
 ```
 
 ### Quick Example for Ruby on Rails
 
 ```sh
-COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db rails s
+export COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db
+rails s
 ```
 
 Rails requires Ruby gems automatically by deafult so we don't need to manually add `require 'cover_rage'`.
@@ -61,11 +61,14 @@ To manually start cover_rage, Add `gem 'cover_rage', require: false` to Gemfile 
 
 ## Export Report
 
-`COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db cover_rage --format html`
+```sh
+export COVER_RAGE_STORE_URL=pstore://$(pwd)/cover_rage.db
+cover_rage --format html
+```
 
 Run `cover_rage -h` for more information.
 
-## Configuration
+## Environment Variables
 
 1. `COVER_RAGE_STORE_URL`
 
@@ -75,18 +78,16 @@ Run `cover_rage -h` for more information.
    2. `redis://REDIS_HOST`
    3. `sqlite://ABSOLUTE_PATH_TO_SQLITE_DB_FILE`
 
-2. `COVE_RAGE_SLEEP_DURATION`
+2. `COVER_RAGE_INTERVAL`
+
+   It sets The interval in seconds between each write to the store. The value should be either an integer or a range in the format `n:m`.
+
+   It is recommended to set a range to avoid write spikes to the store.
 
    Defaults to `60:90`.
 
-   `COVE_RAGE_SLEEP_DURATION` sets the seconds between each write to the store.
+3. `COVER_RAGE_PATH_PREFIX`
 
-   The value should be either an integer or a range in the format `n:m`.
+   `cover_rage` will only record files that match the specified prefix.
 
-   By default `cover_rage` randomly sleeps from 60 to 90 seconds before each write to the store in order to solve the issue like [cache stampede](https://en.wikipedia.org/wiki/Cache_stampede). This approaches is called probabilistic early expiration.
-
-3. `COVE_RAGE_ROOT_PATH`
-
-   Defaults to `Rails.root` if `Rails` is defined, otherwise, defaults to `Dir.pwd`.
-
-   `COVE_RAGE_ROOT_PATH` sets project root path. `cover_rage` only records files in the root path.
+   Defaults to `Rails.root` if the `Rails` constant is defined; otherwise, defaults to `Dir.pwd`.

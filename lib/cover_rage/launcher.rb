@@ -11,7 +11,7 @@ module CoverRage
       if @recorder.nil?
         @recorder = CoverRage::Recorder.new(
           store: CoverRage::Config.store,
-          root_path: CoverRage::Config.root_path,
+          path_prefix: CoverRage::Config.path_prefix,
           **kwargs
         )
       end

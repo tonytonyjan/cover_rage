@@ -3,8 +3,8 @@
 require 'uri'
 module CoverRage
   module Config
-    def self.root_path
-      @root_path ||= ENV.fetch('COVER_RAGE_ROOT_PATH', defined?(Rails) && Rails.root ? Rails.root.to_s : Dir.pwd)
+    def self.path_prefix
+      @path_prefix ||= ENV.fetch('COVER_RAGE_PATH_PREFIX', defined?(Rails) && Rails.root ? Rails.root.to_s : Dir.pwd)
     end
 
     def self.store
@@ -26,10 +26,10 @@ module CoverRage
       end
     end
 
-    def self.sleep_duration
-      @sleep_duration ||= begin
+    def self.interval
+      @interval ||= begin
         args =
-          ENV.fetch('COVER_RAGE_SLEEP_DURATION', '60:90').split(':').map!(&:to_i).first(2)
+          ENV.fetch('COVER_RAGE_INTERVAL', '60:90').split(':').map!(&:to_i).first(2)
         args.push(args.first.succ) if args.length < 2
         Range.new(*args, true)
       end

@@ -6,12 +6,12 @@ require 'digest'
 
 module CoverRage
   class Recorder
-    SLEEP_DURATION = Config.sleep_duration
+    INTERVAL = Config.interval
     attr_reader :store
 
-    def initialize(root_path:, store:)
+    def initialize(path_prefix:, store:)
       @store = store
-      @root_path = root_path.end_with?('/') ? root_path : "#{root_path}/"
+      @path_prefix = path_prefix.end_with?('/') ? path_prefix : "#{path_prefix}/"
       @digest = Digest::MD5.new
       @file_cache = {}
     end
@@ -25,7 +25,7 @@ module CoverRage
       end
       @thread = Thread.new do
         loop do
-          sleep(rand(SLEEP_DURATION))
+          sleep(rand(INTERVAL))
           save(Coverage.result(stop: false, clear: true))
         end
       end
@@ -37,10 +37,10 @@ module CoverRage
       records = []
       coverage_result.map do |filepath, execution_count|
         filepath = File.expand_path(filepath) unless filepath.start_with?('/')
-        next unless filepath.start_with?(@root_path)
+        next unless filepath.start_with?(@path_prefix)
         next if execution_count.all? { _1.nil? || _1.zero? }
 
-        relative_path = filepath.delete_prefix(@root_path)
+        relative_path = filepath.delete_prefix(@path_prefix)
         revision, source = read_file_with_revision(filepath)
 
         records << Record.new(

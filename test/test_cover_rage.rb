@@ -18,8 +18,8 @@ class TestCoverRage < Minitest::Test
         db_file.close
         env = {
           'COVER_RAGE_STORE_URL' => "pstore:#{db_file.path}",
-          'COVER_RAGE_ROOT_PATH' => File.dirname(ruby_file.path),
-          'COVER_RAGE_SLEEP_DURATION' => '1',
+          'COVER_RAGE_PATH_PREFIX' => File.dirname(ruby_file.path),
+          'COVER_RAGE_INTERVAL' => '1',
           'RUBYLIB' => 'lib'
         }
         cmd = ['ruby', '-r', 'cover_rage', ruby_file.path]
