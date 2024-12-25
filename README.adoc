@@ -1,0 +1,105 @@
+= `cover_rage`
+
+image::https://github.com/tonytonyjan/cover_rage/actions/workflows/test.yml/badge.svg[test]
+
+A Ruby production code coverage tool designed to assist you in identifying unused code, offering the following features:
+
+. zero dependencies
+. super easy setup
+. support process forking without additional configuration
+. minimal performance overhead
+
+== Preview
+
+image::images/demo.png[demo]
+
+== Installation
+
+[source,shell]
+----
+gem install cover_rage
+----
+
+== Setup
+
+[source,ruby]
+----
+require 'cover_rage'
+----
+
+*AND THAT'S IT!*
+
+No rack middleware, no `after_fork` callbacks, no configuration files, no additional setup required.
+
+It starts recording coverage data and periodically writes to `./cover_rage.pstore`.
+
+To change the store type and location, set `COVER_RAGE_STORE_URL` environment variable.
+
+To export results to HTML later, run `cover_rage`.
+
+== Quick Start
+
+[source,shell]
+----
+cat >main.rb <<RUBY
+s = 0
+10.times do |x|
+  s += x
+end
+
+if s == 45
+  p :ok
+else
+  p :ng
+end
+RUBY
+gem install cover_rage
+ruby -r cover_rage main.rb
+cover_rage > cover_rage.html
+----
+
+== Integration with Ruby on Rails
+
+There is no additional setup required because Bundler loads gems automatically by default.
+
+To manually start `cover_rage`, use `gem 'cover_rage', require: false` in the `Gemfile` and put `require 'cover_rage'` explicitly in the codebase.
+
+== Exporting Results
+
+[source,shell]
+----
+cover_rage --format html
+----
+
+Run `cover_rage -h` for more information.
+
+== Environment Variables
+
+. `COVER_RAGE_STORE_URL`
++
+Available URL schemes:
++
+--
+.. `pstore://ABSOLUTE_PATH_TO_PSTORE_FILE`
+.. `redis://REDIS_HOST`
+.. `sqlite://ABSOLUTE_PATH_TO_SQLITE_DB_FILE`
+--
++
+Ensure you have the necessary gems (e.g., `sqlite3`, `redis`) installed to use other store types.
++
+Defaults to `pstore:$(pwd)/cover_rage.pstore`.
+
+. `COVER_RAGE_INTERVAL`
++
+It sets The interval in seconds between each write to the store.
+The value should be either an integer or a range in the format `n:m`
++
+It is recommended to set a range to avoid write spikes to the store
++
+Defaults to `60:90`.
+
+. `COVER_RAGE_PATH_PREFIX`
++
+`cover_rage` will only record files that match the specified prefix.
++
+Defaults to `Rails.root` if the `Rails` constant is defined; otherwise, defaults to `Dir.pwd`.
