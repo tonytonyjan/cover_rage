@@ -2,16 +2,17 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'cover_rage'
-  spec.version = '0.0.6'
+  spec.version = '1.0.0'
   spec.authors = 'Weihang Jian'
   spec.email = 'tonytonyjan@gmail.com'
   spec.summary = 'A Ruby production code coverage tool'
   spec.description = <<~DESC
     A Ruby production code coverage tool designed to assist you in identifying unused code, offering the following features:
 
-    1. easy setup
-    2. minimal performance overhead
-    3. minimal external dependencies
+    1. zero dependencies
+    2. super easy setup
+    3. support process forking without additional configuration
+    4. minimal performance overhead
   DESC
   spec.homepage = 'https://github.com/tonytonyjan/cover_rage'
   spec.license = 'MIT'
