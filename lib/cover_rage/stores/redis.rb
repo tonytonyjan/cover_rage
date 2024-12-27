@@ -22,13 +22,11 @@ module CoverRage
         loop do
           break if @redis.watch(KEY) do
             records_to_save = Record.merge(list, records)
-            if records_to_save.any?
-              arguments = []
-              records_to_save.each do |record|
-                arguments.push(record.path, JSON.dump(record.to_h))
-              end
-              @redis.multi { _1.hset(KEY, *arguments) }
+            arguments = []
+            records_to_save.each do |record|
+              arguments.push(record.path, JSON.dump(record.to_h))
             end
+            @redis.multi { _1.hset(KEY, *arguments) }
           end
         end
       end
