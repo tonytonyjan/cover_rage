@@ -6,7 +6,6 @@ require 'digest'
 
 module CoverRage
   class Recorder
-    INTERVAL = Config.interval
     attr_reader :store
 
     def initialize(path_prefix:, store:)
@@ -24,8 +23,10 @@ module CoverRage
         at_exit { save(Coverage.result) }
       end
       @thread = Thread.new do
+        interval = Config.interval
+        jitter = 0.15
         loop do
-          sleep(rand(INTERVAL))
+          sleep(interval + rand * interval * jitter)
           save(Coverage.result(stop: false, clear: true))
         end
       end

@@ -60,9 +60,9 @@ cover_rage > cover_rage.html
 
 == Integration with Ruby on Rails
 
-There is no additional setup required because Bundler loads gems automatically by default.
+There is no additional setup required because Rails loads gems automatically by default by `require 'bundler/setup'`.
 
-To manually start `cover_rage`, use `gem 'cover_rage', require: false` in the `Gemfile` and put `require 'cover_rage'` explicitly in the codebase.
+To manually start `cover_rage`, use `gem 'cover_rage', require: false` in the `Gemfile` and put `require 'cover_rage'` explicitly in `config/boot.rb`.
 
 == Exporting Results
 
@@ -92,11 +92,8 @@ Defaults to `pstore:$(pwd)/cover_rage.pstore`.
 . `COVER_RAGE_INTERVAL`
 +
 It sets The interval in seconds between each write to the store.
-The value should be either an integer or a range in the format `n:m`
 +
-It is recommended to set a range to avoid write spikes to the store
-+
-Defaults to `60:90`.
+Defaults to `60`.
 
 . `COVER_RAGE_PATH_PREFIX`
 +

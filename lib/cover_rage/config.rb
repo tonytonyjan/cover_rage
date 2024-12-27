@@ -27,16 +27,7 @@ module CoverRage
     end
 
     def self.interval
-      @interval ||= begin
-        args =
-          ENV.fetch('COVER_RAGE_INTERVAL', '60:90').split(':').map!(&:to_i).first(2)
-        args.push(args.first.succ) if args.length < 2
-        Range.new(*args, true)
-      end
-    end
-
-    def self.disable?
-      @disable ||= ENV.key?('COVER_RAGE_DISABLE')
+      @interval ||= ENV.fetch('COVER_RAGE_INTERVAL', '60').to_i
     end
   end
 end
