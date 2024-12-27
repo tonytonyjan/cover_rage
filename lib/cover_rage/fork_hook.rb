@@ -7,5 +7,11 @@ module CoverRage
       CoverRage::Launcher.start if pid.zero?
       pid
     end
+
+    def daemon(...)
+      returned = super
+      CoverRage::Launcher.start
+      returned
+    end
   end
 end
