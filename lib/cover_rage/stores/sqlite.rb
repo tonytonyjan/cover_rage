@@ -20,24 +20,24 @@ module CoverRage
       end
 
       def import(records)
-        @db.transaction do
+        @db.transaction(:exclusive) do
           records_to_save = Record.merge(list, records)
-          if records_to_save.any?
-            @db.execute(
-              "insert or replace into records (path, revision, source, execution_count) values #{
-                (['(?,?,?,?)'] * records_to_save.length).join(',')
-              }",
-              records_to_save.each_with_object([]) do |record, memo|
-                memo.push(
-                  record.path,
-                  record.revision,
-                  record.source,
-                  JSON.dump(record.execution_count)
-                )
-              end
-            )
-          end
+          @db.execute(
+            "insert or replace into records (path, revision, source, execution_count) values #{
+              (['(?,?,?,?)'] * records_to_save.length).join(',')
+            }",
+            records_to_save.each_with_object([]) do |record, memo|
+              memo.push(
+                record.path,
+                record.revision,
+                record.source,
+                JSON.dump(record.execution_count)
+              )
+            end
+          )
         end
+      rescue SQLite3::BusyException
+        retry
       end
 
       def find(path)
