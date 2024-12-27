@@ -1,17 +1,14 @@
-= `cover_rage`
+= cover_rage
 
 image::https://github.com/tonytonyjan/cover_rage/actions/workflows/test.yml/badge.svg[test]
 
-A Ruby production code coverage tool designed to assist you in identifying unused code, offering the following features:
+cover_rage is a Ruby code coverage tool designed to be simple and easy to use. It can be used not only for test coverage but also in production services to identify unused code.
 
-. zero dependencies
-. super easy setup
-. support process forking without additional configuration
-. minimal performance overhead
+Key features:
 
-== Preview
-
-image::images/demo.png[demo]
+. Runs in continuous processes (e.g., Rails servers)
+. Zero dependencies
+. Supports forking and daemonization without additional setup
 
 == Installation
 
@@ -29,11 +26,11 @@ require 'cover_rage'
 
 *AND THAT'S IT!*
 
-No rack middleware, no `after_fork` callbacks, no configuration files, no additional setup required.
+No rack middleware, no fork callbacks, no configuration files, and no additional setup required.
 
-It starts recording coverage data and periodically writes to `./cover_rage.pstore`.
+It starts collecting coverage data and periodically writes to `./cover_rage.pstore`.
 
-To change the store type and location, set `COVER_RAGE_STORE_URL` environment variable.
+To change the store type and location, refer to `COVER_RAGE_STORE_URL` below.
 
 To export results to HTML later, run `cover_rage`.
 
@@ -46,23 +43,46 @@ s = 0
 10.times do |x|
   s += x
 end
-
+fork
 if s == 45
   p :ok
 else
   p :ng
 end
 RUBY
+
 gem install cover_rage
 ruby -r cover_rage main.rb
 cover_rage > cover_rage.html
 ----
 
+image::images/demo.png[demo,200]
+
 == Integration with Ruby on Rails
 
-There is no additional setup required because Rails loads gems automatically by default by `require 'bundler/setup'`.
+No additional setup is required because Rails loads gems automatically, but you can customize the behavior by updating `Gemfile`.
 
-To manually start `cover_rage`, use `gem 'cover_rage', require: false` in the `Gemfile` and put `require 'cover_rage'` explicitly in `config/boot.rb`.
+To run cover_rage only in the test environment:
+
+.Gemfile
+[source,ruby]
+----
+gem 'cover_rage', group: :test
+----
+
+To manually start cover_rage:
+
+.Gemfile
+[source,ruby]
+----
+gem 'cover_rage', require: false
+----
+
+.config/boot.rb
+[source,ruby]
+----
+require 'cover_rage'
+----
 
 == Exporting Results
 
@@ -97,6 +117,6 @@ Defaults to `60`.
 
 . `COVER_RAGE_PATH_PREFIX`
 +
-`cover_rage` will only record files that match the specified prefix.
+cover_rage will only record files that match the specified prefix.
 +
 Defaults to `Rails.root` if the `Rails` constant is defined; otherwise, defaults to `Dir.pwd`.
