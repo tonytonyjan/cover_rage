@@ -10,7 +10,7 @@ class TestCoverRage < Minitest::Test
     Tempfile.create do |ruby_file|
       ruby_file.write <<~RUBY
         pid = fork
-        sleep
+        sleep 2
       RUBY
       ruby_file.close
 
@@ -24,11 +24,12 @@ class TestCoverRage < Minitest::Test
         }
         cmd = ['ruby', '-r', 'cover_rage', ruby_file.path]
         pid = spawn(env, *cmd)
-        sleep 1.15 # wait for the thread to save coverage results
+        sleep 1.5 # wait for the thread to save coverage results
         IO.popen(env, ['bin/cover_rage', '-f', 'json']) do |io|
           assert_equal [1, 2], JSON.parse(io.read).dig(0, 'execution_count')
         end
-        Process.kill 'TERM', pid
+      ensure
+        Process.wait(pid)
       end
     end
   end
