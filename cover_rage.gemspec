@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = 'https://github.com/tonytonyjan/cover_rage'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 2.3.0'
+  spec.required_ruby_version = '>= 3.2'
   spec.files = Dir['lib/**/*']
   spec.executables = ['cover_rage']
   spec.add_development_dependency 'rake', '~> 13.0'
