@@ -9,6 +9,7 @@ module CoverRage
     end
 
     def daemon(...)
+      CoverRage::Launcher.recorder.save(Coverage.result(stop: false))
       returned = super
       CoverRage::Launcher.start
       returned

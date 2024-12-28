@@ -7,6 +7,8 @@ require 'coverage'
 
 module CoverRage
   class Launcher
+    singleton_class.attr_reader :recorder
+
     def self.start(**kwargs)
       if @recorder.nil?
         @recorder = CoverRage::Recorder.new(

@@ -32,8 +32,6 @@ module CoverRage
       end
     end
 
-    private
-
     def save(coverage_result)
       records = []
       coverage_result.map do |filepath, execution_count|
@@ -53,6 +51,8 @@ module CoverRage
       end
       @store.import(records) if records.any?
     end
+
+    private
 
     def read_file_with_revision(path)
       return @file_cache[path] if @file_cache.key?(path)
