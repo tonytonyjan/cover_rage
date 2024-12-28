@@ -18,9 +18,6 @@ module CoverRage
         )
       end
       @recorder.start
-      return unless Process.respond_to?(:_fork)
-      return if Process.singleton_class < CoverRage::ForkHook
-
       Process.singleton_class.prepend(CoverRage::ForkHook)
     end
   end
