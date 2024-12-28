@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'cover_rage'
-  spec.version = '1.0.0'
+  spec.version = '1.1.0'
   spec.authors = 'Weihang Jian'
   spec.email = 'tonytonyjan@gmail.com'
   spec.summary = 'cover_rage is a Ruby code coverage tool designed to be simple and easy to use. It can be used not only for test coverage but also in production services to identify unused code.'
