@@ -18,10 +18,6 @@ module CoverRage
         end
       end
 
-      def find(path)
-        @store.transaction { @store[path] }
-      end
-
       def list
         @store.transaction do
           @store.keys.map { @store[_1] }

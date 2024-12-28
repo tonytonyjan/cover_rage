@@ -50,22 +50,6 @@ module CoverRage
         retry
       end
 
-      def find(path)
-        rows = @db.execute(
-          'select revision, source, execution_count from records where path = ? limit 1',
-          [path]
-        )
-        return nil if rows.empty?
-
-        revision, source, execution_count = rows.first
-        Record.new(
-          path: path,
-          revision: revision,
-          source: source,
-          execution_count: JSON.parse(execution_count)
-        )
-      end
-
       def list
         @db
           .execute('select path, revision, source, execution_count from records')

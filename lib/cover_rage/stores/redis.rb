@@ -31,13 +31,6 @@ module CoverRage
         end
       end
 
-      def find(path)
-        result = @redis.hget(KEY, path)
-        return nil if result.nil?
-
-        Record.new(**JSON.parse(result))
-      end
-
       def list
         result = @redis.hgetall(KEY)
         return [] if result.empty?
