@@ -22,4 +22,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rake
+      - run: |
+          docker run --name redis --rm -d -p 6379:6379 redis:alpine
+          TEST_REDIS_URL=redis://localhost:6379 bundle exec rake
+          docker stop redis
