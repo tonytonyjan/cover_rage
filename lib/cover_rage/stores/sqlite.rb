@@ -17,6 +17,16 @@ module CoverRage
             execution_count text not null
           )
         SQL
+        process_ext = Module.new
+        process_ext.module_exec(self) do |store|
+          define_method :_fork do
+            store.instance_variable_get(:@db).close
+            pid = super()
+            store.instance_variable_set(:@db, SQLite3::Database.new(path))
+            pid
+          end
+        end
+        Process.singleton_class.prepend(process_ext)
       end
 
       def import(records)
@@ -59,7 +69,7 @@ module CoverRage
       def list
         @db
           .execute('select path, revision, source, execution_count from records')
-          .map! do |(path, revision, source, execution_count)|
+          .map do |(path, revision, source, execution_count)|
             Record.new(
               path: path,
               revision: revision,
