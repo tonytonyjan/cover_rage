@@ -10,23 +10,42 @@ module CoverRage
         @store = PStore.new(path, true)
       end
 
-      def import(records)
+      def transaction
         @store.transaction do
-          persisted_records = @store.keys.map { @store[_1] }
-          records_to_save = Record.merge(persisted_records, records)
-          records_to_save.each { @store[_1.path] = _1 }
+          @transaction = true
+          yield
+        ensure
+          @transaction = false
+        end
+      end
+
+      def update(records)
+        if @transaction
+          records.each { @store[_1.path] = _1 }
+        else
+          @store.transaction do
+            records.each { @store[_1.path] = _1 }
+          end
         end
       end
 
       def list
-        @store.transaction do
+        if @transaction
           @store.keys.map { @store[_1] }
+        else
+          @store.transaction do
+            @store.keys.map { @store[_1] }
+          end
         end
       end
 
       def clear
-        @store.transaction do
+        if @transaction
           @store.keys.each { @store.delete(_1) }
+        else
+          @store.transaction do
+            @store.keys.each { @store.delete(_1) }
+          end
         end
       end
     end

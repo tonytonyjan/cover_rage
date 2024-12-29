@@ -49,7 +49,12 @@ module CoverRage
           execution_count: execution_count
         )
       end
-      @store.import(records) if records.any?
+      if records.any?
+        @store.transaction do
+          records_to_save = Record.merge(@store.list, records)
+          @store.update(records_to_save)
+        end
+      end
     end
 
     private

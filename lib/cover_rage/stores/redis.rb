@@ -18,17 +18,27 @@ module CoverRage
           end
       end
 
-      def import(records)
+      def transaction(&)
         loop do
           break if @redis.watch(KEY) do
-            records_to_save = Record.merge(list, records)
-            arguments = []
-            records_to_save.each do |record|
-              arguments.push(record.path, JSON.dump(record.to_h))
+            @redis.multi do |multi|
+              Thread.current[:redis_multi] = multi
+              yield
+            ensure
+              Thread.current[:redis_multi] = nil
             end
-            @redis.multi { _1.hset(KEY, *arguments) }
           end
         end
+      end
+
+      def update(records)
+        arguments = []
+        records.each do |record|
+          arguments.push(record.path, JSON.dump(record.to_h))
+        end
+
+        client = Thread.current[:redis_multi] || @redis
+        client.hset(KEY, *arguments)
       end
 
       def list

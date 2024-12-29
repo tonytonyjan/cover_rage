@@ -8,6 +8,7 @@ module CoverRage
   module Stores
     class Sqlite
       def initialize(path)
+        @path = path
         @db = SQLite3::Database.new(path)
         @db.execute <<-SQL
           create table if not exists records (
@@ -29,25 +30,26 @@ module CoverRage
         Process.singleton_class.prepend(process_ext)
       end
 
-      def import(records)
-        @db.transaction(:exclusive) do
-          records_to_save = Record.merge(list, records)
-          @db.execute(
-            "insert or replace into records (path, revision, source, execution_count) values #{
-              (['(?,?,?,?)'] * records_to_save.length).join(',')
-            }",
-            records_to_save.each_with_object([]) do |record, memo|
-              memo.push(
-                record.path,
-                record.revision,
-                record.source,
-                JSON.dump(record.execution_count)
-              )
-            end
-          )
-        end
+      def transaction(&)
+        @db.transaction(:exclusive, &)
       rescue SQLite3::BusyException
         retry
+      end
+
+      def update(records)
+        @db.execute(
+          "insert or replace into records (path, revision, source, execution_count) values #{
+            (['(?,?,?,?)'] * records.length).join(',')
+          }",
+          records.each_with_object([]) do |record, memo|
+            memo.push(
+              record.path,
+              record.revision,
+              record.source,
+              JSON.dump(record.execution_count)
+            )
+          end
+        )
       end
 
       def list
