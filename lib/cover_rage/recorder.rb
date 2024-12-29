@@ -26,7 +26,7 @@ module CoverRage
         interval = Config.interval
         jitter = 0.15
         loop do
-          sleep(interval + rand * interval * jitter)
+          sleep(interval + (rand * interval * jitter))
           save(Coverage.result(stop: false, clear: true))
         end
       end
@@ -44,16 +44,16 @@ module CoverRage
 
         records << Record.new(
           path: relative_path,
-          revision: revision,
-          source: source,
-          execution_count: execution_count
+          revision:,
+          source:,
+          execution_count:
         )
       end
-      if records.any?
-        @store.transaction do
-          records_to_save = Record.merge(@store.list, records)
-          @store.update(records_to_save)
-        end
+      return unless records.any?
+
+      @store.transaction do
+        records_to_save = Record.merge(@store.list, records)
+        @store.update(records_to_save)
       end
     end
 

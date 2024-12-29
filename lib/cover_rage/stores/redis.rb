@@ -12,9 +12,9 @@ module CoverRage
       def initialize(url)
         @redis =
           if url.start_with?('rediss')
-            ::Redis.new(url: url, ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE })
+            ::Redis.new(url:, ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE })
           else
-            ::Redis.new(url: url)
+            ::Redis.new(url:)
           end
       end
 

@@ -60,9 +60,9 @@ module CoverRage
           .execute('select path, revision, source, execution_count from records')
           .map do |(path, revision, source, execution_count)|
             Record.new(
-              path: path,
-              revision: revision,
-              source: source,
+              path:,
+              revision:,
+              source:,
               execution_count: JSON.parse(execution_count)
             )
           end
