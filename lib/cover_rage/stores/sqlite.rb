@@ -8,6 +8,7 @@ module CoverRage
   module Stores
     class Sqlite
       def initialize(path)
+        @mutex = Mutex.new
         @path = path
         @db = SQLite3::Database.new(path)
         @db.execute <<-SQL
@@ -31,9 +32,11 @@ module CoverRage
       end
 
       def transaction(&)
-        @db.transaction(:exclusive, &)
-      rescue SQLite3::BusyException
-        retry
+        @mutex.synchronize do
+          @db.transaction(:exclusive, &)
+        rescue SQLite3::BusyException
+          retry
+        end
       end
 
       def update(records)
